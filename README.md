@@ -13,6 +13,7 @@ Multi-AZ VPC · optional NAT · flow logs · least-privilege EC2 role over SSM, 
 [![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](LICENSE)
 
 [Architecture](ARCHITECTURE.md) ·
+[Lessons learned](LESSONS.md) ·
 [Network module](modules/network) ·
 [IAM module](modules/iam) ·
 [Examples](examples) ·
@@ -158,6 +159,14 @@ resource names. Full control list and reporting process: [SECURITY.md](SECURITY.
 - [ ] Optional IPv6 dual-stack
 - [ ] Network ACLs as defence in depth behind security groups
 - [ ] Terratest coverage for the subnet allocation logic
+
+## Engineering decisions &amp; lessons learned
+
+Four mistakes made while building this — including a documented security control
+that accepted `arn:aws:s3:::*`, and a documentation drift check that failed on
+the very commit that introduced it.
+
+**[Read the retrospective →](LESSONS.md)**
 
 ## Contributing
 
