@@ -92,3 +92,34 @@ jobs:
 
       - name: Check the committed tables match the code
         run: make docs-check
+
+  scan:
+    name: security scan
+    runs-on: ubuntu-latest
+
+    # Terraform can be valid, formatted, lint-clean and still describe insecure
+    # infrastructure — none of fmt, validate or tflint reason about whether a
+    # security group is open to the world. This is the job that does.
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Trivy misconfiguration scan
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          scan-type: config
+          scan-ref: .
+          format: table
+          exit-code: "1"
+          severity: HIGH,CRITICAL
+          # Terraform-only: skip the examples' lock files and any cached provider.
+          skip-dirs: .terraform
+
+      - name: Trivy secret scan
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          scan-type: fs
+          scan-ref: .
+          scanners: secret
+          format: table
+          exit-code: "1"
+          severity: HIGH,CRITICAL

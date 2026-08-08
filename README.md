@@ -10,6 +10,7 @@ Multi-AZ VPC · optional NAT · flow logs · least-privilege EC2 role over SSM, 
 [![Terraform](https://img.shields.io/badge/terraform-%E2%89%A5%201.6-7B42BC?style=flat-square&logo=terraform&logoColor=white)](https://developer.hashicorp.com/terraform)
 [![AWS Provider](https://img.shields.io/badge/aws%20provider-%E2%89%A5%205.0-FF9900?style=flat-square&logo=amazonwebservices&logoColor=white)](https://registry.terraform.io/providers/hashicorp/aws/latest)
 [![tflint](https://img.shields.io/badge/tflint-0%20findings-2ea44f?style=flat-square)](.tflint.hcl)
+[![Trivy](https://img.shields.io/badge/trivy-0%20HIGH%2FCRITICAL-2ea44f?style=flat-square)](.github/workflows/terraform.yml)
 [![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](LICENSE)
 
 [Architecture](ARCHITECTURE.md) ·
@@ -143,8 +144,9 @@ make docs      # regenerate module input/output tables
 
 `make check` runs `terraform fmt`, `terraform validate` across the root and both
 examples, `tflint` with the AWS ruleset, and a drift check confirming the
-generated tables match the code. CI runs the same four on every push and uses no
-AWS credentials — it is static analysis only and can never create a resource.
+generated tables match the code. CI runs those four plus a Trivy scan for
+misconfigurations and committed secrets, and uses no AWS credentials — it is
+static analysis only and can never create a resource.
 
 ## Security
 
