@@ -29,9 +29,16 @@ variable "readable_s3_bucket_arns" {
   type        = list(string)
   default     = []
 
+  # The bucket name is matched against real S3 naming rules rather than just
+  # checking the ARN prefix. A prefix-only check accepts "arn:aws:s3:::*", which
+  # would silently grant read on every bucket in the account — the exact outcome
+  # this variable exists to prevent.
   validation {
-    condition     = alltrue([for a in var.readable_s3_bucket_arns : can(regex("^arn:aws[a-z-]*:s3:::", a))])
-    error_message = "Each entry must be an S3 bucket ARN, for example arn:aws:s3:::my-bucket."
+    condition = alltrue([
+      for a in var.readable_s3_bucket_arns :
+      can(regex("^arn:aws[a-z-]*:s3:::[a-z0-9][a-z0-9.-]{1,61}[a-z0-9]$", a))
+    ])
+    error_message = "Each entry must be a fully qualified S3 bucket ARN naming one bucket, for example arn:aws:s3:::my-bucket. Wildcards and object paths are not accepted."
   }
 }
 
