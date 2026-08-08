@@ -1,0 +1,33 @@
+version: 2
+
+updates:
+  # Action versions go stale quietly — a workflow keeps passing while the actions
+  # it pins drift out of support, which is how the Node 20 deprecation warnings
+  # appeared here. Grouped so routine bumps arrive as one reviewable PR.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      actions:
+        patterns: ["*"]
+    commit-message:
+      prefix: "ci"
+    labels:
+      - dependencies
+      - github-actions
+
+  # The AWS provider is constrained to >= 5.0, < 7.0, so Dependabot proposes
+  # lock-file updates within that range rather than surprise major versions.
+  - package-ecosystem: terraform
+    directories:
+      - /
+      - /examples/minimal
+      - /examples/complete
+    schedule:
+      interval: monthly
+    commit-message:
+      prefix: "deps"
+    labels:
+      - dependencies
+      - terraform

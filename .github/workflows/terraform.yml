@@ -66,3 +66,21 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - run: tflint --recursive --format compact
+
+  docs:
+    name: terraform-docs up to date
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Regenerate module tables
+        uses: terraform-docs/gh-actions@v1
+        with:
+          working-dir: modules/network,modules/iam
+          config-file: .terraform-docs.yml
+          output-file: README.md
+          output-method: inject
+          # Report drift instead of pushing a commit back to the branch.
+          git-push: "false"
+          fail-on-diff: "true"

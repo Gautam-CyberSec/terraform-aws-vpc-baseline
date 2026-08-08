@@ -1,0 +1,42 @@
+# Generates the input/output tables in each module README, between the
+# BEGIN_TF_DOCS and END_TF_DOCS markers. Hand-maintained tables drift the moment
+# a variable changes; these do not.
+#
+#   make docs        # or: terraform-docs -c .terraform-docs.yml modules/network
+#
+# CI re-runs this and fails if the result differs from what is committed.
+
+formatter: markdown table
+
+output:
+  file: README.md
+  mode: inject
+  template: |-
+    <!-- BEGIN_TF_DOCS -->
+    {{ .Content }}
+    <!-- END_TF_DOCS -->
+
+sort:
+  enabled: true
+  by: required
+
+settings:
+  anchor: true
+  color: true
+  default: true
+  description: true
+  escape: true
+  hide-empty: true
+  required: true
+  sensitive: true
+  type: true
+
+# Each section renders its own heading, so the template must not add one.
+content: |-
+  {{ .Requirements }}
+
+  {{ .Inputs }}
+
+  {{ .Outputs }}
+
+  {{ .Resources }}
