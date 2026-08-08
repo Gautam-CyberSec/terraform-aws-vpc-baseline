@@ -1,0 +1,30 @@
+# Terraform state — may contain resource attributes and secrets in plain text.
+*.tfstate
+*.tfstate.*
+*.tfstate.backup
+
+# Provider plugins and module caches. Re-created by `terraform init`.
+# .terraform.lock.hcl is deliberately NOT ignored — committing it pins provider
+# versions so CI and every clone resolve identically.
+**/.terraform/
+.terraform.lock.hcl.bak
+
+# Saved plans are binary and can embed sensitive values.
+*.tfplan
+*.tfplan.*
+plan.out
+
+# Local variable overrides. Never commit real values — see terraform.tfvars.example.
+*.tfvars
+*.auto.tfvars
+!*.tfvars.example
+
+# Crash logs
+crash.log
+crash.*.log
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/
+*.swp

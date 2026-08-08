@@ -1,0 +1,68 @@
+name: Terraform
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+# No AWS credentials are configured anywhere in this workflow. Everything it runs
+# is static analysis, so it never touches an account and cannot create resources.
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: fmt · validate · tflint
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        directory:
+          - .
+          - examples/minimal
+          - examples/complete
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.15.8"
+          terraform_wrapper: false
+
+      - name: Check formatting
+        if: matrix.directory == '.'
+        run: terraform fmt -recursive -check -diff
+
+      - name: Initialise without a backend
+        working-directory: ${{ matrix.directory }}
+        run: terraform init -backend=false -input=false
+
+      - name: Validate
+        working-directory: ${{ matrix.directory }}
+        run: terraform validate -no-color
+
+  tflint:
+    name: tflint
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: terraform-linters/setup-tflint@v4
+        with:
+          tflint_version: v0.64.0
+
+      - name: Cache tflint plugins
+        uses: actions/cache@v4
+        with:
+          path: ~/.tflint.d/plugins
+          key: tflint-${{ hashFiles('.tflint.hcl') }}
+
+      - run: tflint --init
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - run: tflint --recursive --format compact

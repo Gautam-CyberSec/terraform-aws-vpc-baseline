@@ -1,0 +1,25 @@
+# Copy to terraform.tfvars and edit. Real .tfvars files are gitignored.
+#
+#   cp terraform.tfvars.example terraform.tfvars
+
+name        = "demo"
+environment = "dev"
+region      = "ap-south-1"
+
+cidr_block              = "10.0.0.0/16"
+availability_zone_count = 2
+
+# Leave false unless private subnets genuinely need outbound internet access.
+# Roughly USD 40/month per gateway in ap-south-1, billed from creation.
+enable_nat_gateway = false
+single_nat_gateway = true
+
+enable_flow_logs        = true
+flow_log_retention_days = 30
+
+# Buckets the instance role may read. Bucket ARNs only — wildcards are rejected.
+# readable_s3_bucket_arns = ["arn:aws:s3:::my-app-assets"]
+
+tags = {
+  Owner = "gautam"
+}
